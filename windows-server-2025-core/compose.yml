@@ -1,0 +1,36 @@
+services:
+  windows:
+    # Downloads and runs the image
+    image: dockurr/windows
+    container_name: windows-server-2025-core
+    environment:
+      VERSION: "2025"
+      # Core means no GUI, all CLI
+      EDITION: "core"
+      # Default is 64 GBs; can also be resized here without data loss
+      DISK_SIZE: "40G"
+      # Default is 4 GBs of RAM
+      RAM_SIZE: "8G"
+      # Default is 2 cores
+      CPU_CORES: 
+    devices:
+    cap_add:
+      # Allows for performing network administration tasks in the container
+      - NET_ADMIN
+    ports:
+      # Connect to this port on a web browser to access container, this method
+      # is only recommended for the initial installation
+      - 8006:8006
+      # You can use FreeRDP to connect to the container IP address after that
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    volumes:
+      # Storage location; maps ./windows directory on host system to /storage
+      # in the container; ./ is relative to the location of the compose file
+      - ./windows:/storage
+    # Container will always restart after it crashes or if Docker restarts, etc.
+    restart: always
+    # When container shuts down, Docker will allow 2 minutes for this process
+    # to complete
+    stop_grace_period: 2m
+
